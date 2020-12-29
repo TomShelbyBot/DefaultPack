@@ -44,10 +44,11 @@ public class Main extends JavaBotPackage {
   );
 
   private static List<SimpleUpdateHandler> updateHandlers;
-  private static PollAnswerHandler pollAnswerHandler;
 
   @Override
   public void onLoad() {
+    System.out.println("Loading default pack");
+
     // Create plugin folder
     File directory = getPackageFolder();
     if (!directory.exists()) {
@@ -79,18 +80,24 @@ public class Main extends JavaBotPackage {
     getBot().getPunishmentHandler().add(new DeleteMessageProcessor());
     getBot().getPunishmentHandler().add(new MumbleMessageProcessor());
 
-    pollAnswerHandler = PollAnswerHandler.loadFrom(new File(getPackageFolder(), "polls.json"));
+    if (PollAnswerHandler.getInstance() == null)
+      PollAnswerHandler.loadFrom(new File(getPackageFolder(), "polls.json"));
+
     updateHandlers = new ArrayList<>();
-    updateHandlers.add(pollAnswerHandler);
+    updateHandlers.add(PollAnswerHandler.getInstance());
     updateHandlers.add(new WelcomeHandler());
     updateHandlers.add(new NonStickerModeHandler());
 
-    for (SimpleUpdateHandler updateHandler : updateHandlers)
-      SimpleUpdateHandler.putConsecutively(getBot(), updateHandler);
+    for (int i = 0; i < updateHandlers.size(); i++) {
+      updateHandlers.get(i).setPriority(100 + i);
+      getBot().getUpdateHandlerManager().addUpdateHandler(updateHandlers.get(i));
+    }
   }
 
   @Override
   public void onDisable() {
+    System.out.println("Disabling default pack");
+
     for (BotCommand botCommand : botCommandList) {
       getBot().getCommandContainer().detach(botCommand.getMeta().getLabel());
     }

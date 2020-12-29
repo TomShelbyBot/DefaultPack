@@ -69,8 +69,7 @@ public class PollAnswerHandler extends SimpleUpdateHandler {
       handler.pollToChatMap = new HashMap<>();
     }
 
-    instance = handler;
-    return handler;
+    return instance = handler;
   }
 
   public static void unload() {
