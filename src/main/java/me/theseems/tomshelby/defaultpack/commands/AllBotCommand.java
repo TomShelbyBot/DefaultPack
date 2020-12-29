@@ -25,9 +25,9 @@ public class AllBotCommand extends SimpleBotCommand implements AdminPermissibleB
                     + "\n\n"
                     + "@"
                     + Joiner.on(", @")
-                        .join(
-                            bot.getChatStorage()
-                                .getResolvableUsernames(update.getMessage().getChatId())))
+                    .join(
+                        bot.getChatStorage()
+                            .getResolvableUsernames(update.getMessage().getChatId())))
             .enableMarkdown(true));
   }
 }
