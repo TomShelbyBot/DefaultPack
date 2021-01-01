@@ -2,14 +2,14 @@ package me.theseems.tomshelby.defaultpack;
 
 import me.theseems.tomshelby.command.BotCommand;
 import me.theseems.tomshelby.defaultpack.commands.*;
-import me.theseems.tomshelby.defaultpack.handlers.*;
+import me.theseems.tomshelby.defaultpack.handlers.NonStickerModeHandler;
+import me.theseems.tomshelby.defaultpack.handlers.PollAnswerHandler;
+import me.theseems.tomshelby.defaultpack.handlers.WelcomeHandler;
 import me.theseems.tomshelby.defaultpack.punishment.DeleteMessageProcessor;
 import me.theseems.tomshelby.defaultpack.punishment.MumbleMessageProcessor;
 import me.theseems.tomshelby.pack.JavaBotPackage;
 import me.theseems.tomshelby.punishment.PunishmentType;
 import me.theseems.tomshelby.update.SimpleUpdateHandler;
-import me.theseems.tomshelby.update.UpdateHandler;
-import org.checkerframework.checker.units.qual.C;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,8 +28,6 @@ public class Main extends JavaBotPackage {
       new AllBotCommand(),
       new NoStickerBotCommand(),
       new GoBotCommand(),
-      new HelpBotCommand(),
-      new InfoBotCommand(),
       new ClapMuteBotCommand(),
       new CheckPunishmentsBotCommand(),
       new ThrowCoinBotCommand(),
@@ -39,7 +37,6 @@ public class Main extends JavaBotPackage {
       new SayBotCommand(),
       new RespectBotCommand(),
       new ToxicBotCommand(),
-      new IdBotCommand(),
       new BombBotCommand()
   );
 
