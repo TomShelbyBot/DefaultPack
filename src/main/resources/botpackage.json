@@ -1,6 +1,7 @@
 {
   "name": "default",
   "author": "@theseems",
+  "version": "0.1D",
   "description": "A default package including some fun commands",
   "main": "me.theseems.tomshelby.defaultpack.Main"
 }
