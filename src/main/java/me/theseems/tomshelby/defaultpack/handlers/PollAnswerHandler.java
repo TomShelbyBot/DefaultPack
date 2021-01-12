@@ -1,6 +1,5 @@
 package me.theseems.tomshelby.defaultpack.handlers;
 
-
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import me.theseems.tomshelby.ThomasBot;
@@ -14,6 +13,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class PollAnswerHandler extends SimpleUpdateHandler {
   public static class PollMessage {
@@ -59,7 +59,8 @@ public class PollAnswerHandler extends SimpleUpdateHandler {
         handler.pollToChatMap =
             new GsonBuilder()
                 .create()
-                .fromJson(new FileReader(file), new TypeToken<Map<String, PollMessage>>() {}.getType());
+                .fromJson(
+                    new FileReader(file), new TypeToken<Map<String, PollMessage>>() {}.getType());
       } catch (FileNotFoundException e) {
         e.printStackTrace();
       }
@@ -99,15 +100,15 @@ public class PollAnswerHandler extends SimpleUpdateHandler {
     if (user.getUserName() != null) {
       userName = user.getUserName();
     } else if (user.getFirstName() != null) {
-      userName = user.getFirstName() + (user.getLastName() != null ? " " + user.getLastName() : "");
+      userName = user.getFirstName() + Optional.ofNullable(user.getLastName()).orElse("");
     } else {
       userName = "?<" + user.getId() + ">";
     }
 
     TomMeta meta = bot.getChatStorage().getChatMeta(pollMessage.chatId);
-    String positiveReaction = meta.getString("pollPositive").orElse("\uD83D\uDE18");
-    String negativeReaction = meta.getString("pollNegative").orElse("\uD83D\uDE1E");
-    String rudeReaction = meta.getString("pollRude").orElse("\uD83E\uDD2C");
+    String positiveReaction = meta.getString("pollPositive").orElse("\uD83D\uDE18"); // '😘'
+    String negativeReaction = meta.getString("pollNegative").orElse("\uD83D\uDE1E"); // '😞'
+    String rudeReaction = meta.getString("pollRude").orElse("\uD83E\uDD2C"); // '🤬'
 
     String text = "";
     if (update.getPollAnswer().getOptionIds().contains(0)) {

@@ -6,20 +6,25 @@
 
     <groupId>me.theseems.tomshelby</groupId>
     <artifactId>defaultpack</artifactId>
-    <version>0.1D</version>
-
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-    </properties>
+    <version>0.2D</version>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
         <dependency>
             <groupId>me.theseems</groupId>
             <artifactId>tomshelby</artifactId>
-            <scope>system</scope>
-            <version>0.5D</version>
-            <systemPath>C:\Users\me\IdeaProjects\tomshel\target\TomShelbyBot-0.5D.jar</systemPath>
+            <version>0.8D</version>
         </dependency>
     </dependencies>
 
