@@ -27,8 +27,7 @@ public class AllBotCommand extends SimpleBotCommand implements AdminPermissibleB
 
     Collection<ChatMember> resolvableNicknames =
         bot.getChatStorage().getResolvableUsernames(update.getMessage().getChatId()).stream()
-            .map(
-                s ->
+            .map(s ->
                     bot.getChatStorage()
                         .lookupMember(update.getMessage().getChatId(), s)
                         .orElse(null))
@@ -36,9 +35,17 @@ public class AllBotCommand extends SimpleBotCommand implements AdminPermissibleB
 
     StringBuilder result = new StringBuilder().append(message);
     for (ChatMember resolvableNickname : resolvableNicknames) {
+      // That certainly needs to be explained.
+      // We have markup support for telegram messages like so: [<title>](<url>)
+      // For title we use Alt+0173 symbol ('­') and for url is a tg link to user (id)
+      // That's how we get the invisible (empty) mention
       result.append("[­](tg://user?id=").append(resolvableNickname.getUser().getId()).append(")");
     }
 
-    bot.replyBack(update, new SendMessage().setText(result.toString()).enableMarkdownV2(true));
+    bot.sendBack(
+        update,
+        new SendMessage()
+            .setText("\uD83D\uDECE " + result.toString())
+            .enableMarkdownV2(true)); // '🛎'
   }
 }
