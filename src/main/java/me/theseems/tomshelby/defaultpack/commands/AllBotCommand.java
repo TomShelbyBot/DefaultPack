@@ -8,6 +8,7 @@ import me.theseems.tomshelby.command.SimpleCommandMeta;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.ChatMember;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -25,6 +26,7 @@ public class AllBotCommand extends SimpleBotCommand implements AdminPermissibleB
       return;
     }
 
+    message = message.replaceAll("!", "\\\\!");
     Collection<ChatMember> resolvableNicknames =
         bot.getChatStorage().getResolvableUsernames(update.getMessage().getChatId()).stream()
             .map(s ->
@@ -42,10 +44,13 @@ public class AllBotCommand extends SimpleBotCommand implements AdminPermissibleB
       result.append("[­](tg://user?id=").append(resolvableNickname.getUser().getId()).append(")");
     }
 
-    bot.sendBack(
-        update,
-        new SendMessage()
-            .setText("\uD83D\uDECE " + result.toString())
-            .enableMarkdownV2(true)); // '🛎'
+    try {
+      bot.execute(
+          new SendMessage().setChatId(update.getMessage().getChatId())
+              .setText("\uD83D\uDECE " + result.toString())
+              .enableMarkdownV2(true)); // '🛎'
+    } catch (TelegramApiException e) {
+      bot.replyBackText(update, "Не могу отправить такое сообщение, аккуратнее с / и !");
+    }
   }
 }
