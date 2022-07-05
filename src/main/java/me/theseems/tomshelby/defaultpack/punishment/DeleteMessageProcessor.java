@@ -15,9 +15,10 @@ public class DeleteMessageProcessor implements PunishmentProcessor {
     ThomasBot bot = Main.getBot();
     try {
       bot.execute(
-          new DeleteMessage()
-              .setChatId(update.getMessage().getChatId())
-              .setMessageId(update.getMessage().getMessageId()));
+          DeleteMessage.builder()
+              .chatId(update.getMessage().getChatId().toString())
+              .messageId(update.getMessage().getMessageId())
+              .build());
     } catch (TelegramApiException e) {
       e.printStackTrace();
     }

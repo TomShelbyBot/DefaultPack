@@ -15,8 +15,9 @@ public class GooseBotCommand extends SimpleBotCommand {
   public void handle(ThomasBot bot, String[] args, Update update) {
     bot.sendBack(
         update,
-        new SendMessage()
-            .setText(
+        SendMessage.builder()
+            .chatId("")
+            .text(
                 "ЗАПУСКАЕМ\n"
                     + "░ГУСЯ░▄▀▀▀▄░РАБОТЯГИ░░\n"
                     + "▄███▀░◐░░░▌░░░░░░░\n"
@@ -30,6 +31,7 @@ public class GooseBotCommand extends SimpleBotCommand {
                     + "░░░░░░▀▄▄▄▄▄█▄▄▄▄▄▄▄▄▄▄▄▀▄\n"
                     + "░░░░░░░░░░░▌▌░▌▌░░░░░\n"
                     + "░░░░░░░░░░░▌▌░▌▌░░░░░\n"
-                    + "░░░░░░░░░▄▄▌▌▄▌▌░░░░░"));
+                    + "░░░░░░░░░▄▄▌▌▄▌▌░░░░░")
+            .build());
   }
 }

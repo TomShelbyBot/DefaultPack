@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MumbleMessageProcessor implements PunishmentProcessor {
-  private final Map<Integer, Instant> latest;
+  private final Map<Long, Instant> latest;
 
   public MumbleMessageProcessor() {
     latest = new ConcurrentHashMap<>();
@@ -29,9 +29,10 @@ public class MumbleMessageProcessor implements PunishmentProcessor {
     try {
 
       bot.execute(
-          new DeleteMessage()
-              .setChatId(update.getMessage().getChatId())
-              .setMessageId(update.getMessage().getMessageId()));
+          DeleteMessage.builder()
+              .chatId(update.getMessage().getChatId().toString())
+              .messageId(update.getMessage().getMessageId())
+              .build());
 
       if (!latest.containsKey(update.getMessage().getFrom().getId())
           || latest.get(update.getMessage().getFrom().getId()).isBefore(new Date().toInstant())) {
@@ -44,12 +45,13 @@ public class MumbleMessageProcessor implements PunishmentProcessor {
 
         bot.sendBack(
             update,
-            new SendMessage()
-                .setText(
+            SendMessage.builder()
+                .text(
                     "Кажется, @"
                         + update.getMessage().getFrom().getUserName()
                         + " пытался сказать что-то: "
-                        + builder.toString()));
+                        + builder.toString())
+                .build());
 
         latest.put(
             update.getMessage().getFrom().getId(),
@@ -58,9 +60,11 @@ public class MumbleMessageProcessor implements PunishmentProcessor {
     } catch (TelegramApiException e) {
       bot.sendBack(
           update,
-          new SendMessage()
-              .setText("А этот рептивый! Кляп вылетает!!!")
-              .setReplyToMessageId(update.getMessage().getMessageId()));
+          SendMessage.builder()
+              .chatId("")
+              .text("Кляп вылетает!!!")
+              .replyToMessageId(update.getMessage().getMessageId())
+              .build());
     }
 
     return false;

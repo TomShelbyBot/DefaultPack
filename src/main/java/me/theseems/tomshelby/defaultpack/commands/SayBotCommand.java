@@ -19,18 +19,20 @@ public class SayBotCommand extends SimpleBotCommand {
     if (args.length == 0) {
       bot.sendBack(
           update,
-          new SendMessage()
-              .setReplyToMessageId(update.getMessage().getMessageId())
-              .setText("А что сказать-то?"));
+          SendMessage.builder()
+              .replyToMessageId(update.getMessage().getMessageId())
+              .text("А что сказать-то?")
+              .build());
       return;
     }
 
     try {
       bot.execute(
-          new DeleteMessage()
-              .setChatId(update.getMessage().getChatId())
-              .setMessageId(update.getMessage().getMessageId()));
-      bot.sendBack(update, new SendMessage().setText(Joiner.on(' ').join(args)));
+          DeleteMessage.builder()
+              .chatId(update.getMessage().getChatId().toString())
+              .messageId(update.getMessage().getMessageId())
+              .build());
+      bot.sendBack(update, SendMessage.builder().chatId("").text(Joiner.on(' ').join(args)).build());
     } catch (TelegramApiException e) {
       e.printStackTrace();
     }

@@ -99,13 +99,12 @@ public class PollAnswerHandler extends SimpleUpdateHandler {
 
     if (user.getUserName() != null) {
       userName = user.getUserName();
-    } else if (user.getFirstName() != null) {
-      userName = user.getFirstName() + Optional.ofNullable(user.getLastName()).orElse("");
     } else {
-      userName = "?<" + user.getId() + ">";
+      user.getFirstName();
+      userName = user.getFirstName() + Optional.ofNullable(user.getLastName()).orElse("");
     }
 
-    TomMeta meta = bot.getChatStorage().getChatMeta(pollMessage.chatId);
+    TomMeta meta = bot.getChatStorage().getChatMeta(String.valueOf(pollMessage.chatId));
     String positiveReaction = meta.getString("pollPositive").orElse("\uD83D\uDE18"); // '😘'
     String negativeReaction = meta.getString("pollNegative").orElse("\uD83D\uDE1E"); // '😞'
     String rudeReaction = meta.getString("pollRude").orElse("\uD83E\uDD2C"); // '🤬'
@@ -121,10 +120,11 @@ public class PollAnswerHandler extends SimpleUpdateHandler {
 
     if (!text.isEmpty())
       bot.execute(
-          new SendMessage()
-              .setText(text + " @" + userName)
-              .setChatId(pollMessage.chatId)
-              .setReplyToMessageId(pollMessage.messageId));
+          SendMessage.builder()
+              .text(text + " @" + userName)
+              .chatId(String.valueOf(pollMessage.chatId))
+              .replyToMessageId(pollMessage.messageId)
+              .build());
     return false;
   }
 

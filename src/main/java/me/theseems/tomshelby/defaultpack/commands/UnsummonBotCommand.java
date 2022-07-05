@@ -18,7 +18,11 @@ public class UnsummonBotCommand extends SimpleBotCommand {
 
   @Override
   public void handle(ThomasBot bot, String[] args, Update update) {
-    bot.sendBack(
-        update, new SendMessage().setText("Сброшено").setReplyMarkup(new ReplyKeyboardRemove()));
+    bot.sendBack(update,
+            SendMessage.builder()
+                    .chatId("")
+                    .text("Сброшено")
+                    .replyMarkup(ReplyKeyboardRemove.builder().removeKeyboard(true).build())
+                    .build());
   }
 }

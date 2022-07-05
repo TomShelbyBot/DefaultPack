@@ -31,7 +31,7 @@ public class BombBotCommand extends SimpleBotCommand implements AdminPermissible
 
     int countMentions =
         bot.getChatStorage()
-            .getChatMeta(update.getMessage().getChatId())
+            .getChatMeta(update.getMessage().getChatId().toString())
             .getInteger(COUNT_BOMB_MENTIONS_KEY)
             .orElse(5);
 
@@ -41,7 +41,7 @@ public class BombBotCommand extends SimpleBotCommand implements AdminPermissible
     }
 
     for (int i = 0; i < countMentions; i++) {
-      bot.sendBack(update, new SendMessage().setText(userMention + reason));
+      bot.sendBack(update, SendMessage.builder().text(userMention + reason).chatId("").build());
     }
   }
 }

@@ -26,26 +26,28 @@ public class BeatBotCommand extends SimpleBotCommand {
     if (args.length == 0) {
       bot.sendBack(
           update,
-          new SendMessage()
-              .setText("Покажи кого изрезать.")
-              .setReplyToMessageId(update.getMessage().getMessageId()));
+          SendMessage.builder()
+              .text("Покажи кого изрезать.")
+              .replyToMessageId(update.getMessage().getMessageId())
+              .build());
     } else {
-      bot.sendBack(
-          update,
-          new SendMessage()
-              .setText(
-                  "__ "
+      SendMessage sendMessage = SendMessage.builder()
+              .text("__ "
                       + "@"
                       + (update.hasMessage()
-                          ? update.getMessage().getFrom().getUserName()
-                          : update.getCallbackQuery().getFrom().getUserName())
+                      ? update.getMessage().getFrom().getUserName()
+                      : update.getCallbackQuery().getFrom().getUserName())
                       + " всячески изуродовал козырьком "
                       + args[0]
                       + ". "
                       + Joiner.on(' ')
-                          .join(Arrays.stream(args).skip(1).collect(Collectors.toList()))
+                      .join(Arrays.stream(args).skip(1).collect(Collectors.toList()))
                       + " __")
-              .enableMarkdown(true));
+              .chatId("")
+              .build();
+      sendMessage.enableMarkdown(true);
+
+      bot.sendBack(update, sendMessage);
     }
   }
 }

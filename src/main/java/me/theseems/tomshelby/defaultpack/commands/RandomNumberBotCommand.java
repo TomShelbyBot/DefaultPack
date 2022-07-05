@@ -45,18 +45,21 @@ public class RandomNumberBotCommand extends SimpleBotCommand {
     if (upperBound > 10000) upperBound = 10000;
     int result = new Random().nextInt(upperBound - lowerBound + 1) + lowerBound;
 
-    bot.sendBack(
-        update,
-        new SendMessage()
-            .setReplyToMessageId(update.getMessage().getMessageId())
-            .setText(
-                "\n \nВыбираем число от "
-                    + lowerBound
-                    + " до "
-                    + upperBound
-                    + "\nВам выпало: *"
-                    + result
-                    + "*")
-            .enableMarkdown(true));
+    SendMessage sendMessage =
+            SendMessage.builder()
+                    .chatId("")
+                    .replyToMessageId(update.getMessage().getMessageId())
+                    .text(
+                            "\n \nВыбираем число от "
+                                    + lowerBound
+                                    + " до "
+                                    + upperBound
+                                    + "\nВам выпало: *"
+                                    + result
+                                    + "*")
+                    .build();
+
+    sendMessage.enableMarkdown(true);
+    bot.sendBack(update, sendMessage);
   }
 }

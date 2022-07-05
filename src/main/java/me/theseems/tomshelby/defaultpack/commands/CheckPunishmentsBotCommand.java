@@ -6,7 +6,7 @@ import me.theseems.tomshelby.command.SimpleCommandMeta;
 import me.theseems.tomshelby.punishment.Punishment;
 import me.theseems.tomshelby.util.StringUtils;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.ChatMember;
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.Collection;
@@ -22,9 +22,10 @@ public class CheckPunishmentsBotCommand extends SimpleBotCommand {
     if (!dragResult.getMember().isPresent()) {
       bot.sendBack(
           update,
-          new SendMessage()
-              .setText("Не могу найти гражданина которому нужно вставить кляп!")
-              .setReplyToMessageId(update.getMessage().getMessageId()));
+          SendMessage.builder()
+              .text("Не могу найти гражданина которому нужно вставить кляп!")
+              .replyToMessageId(update.getMessage().getMessageId())
+              .build());
       return;
     }
 
@@ -46,6 +47,6 @@ public class CheckPunishmentsBotCommand extends SimpleBotCommand {
           .append(punishment.getReason().isPresent() ? punishment.getReason().get() : "<нет>");
     }
 
-    bot.sendBack(update, new SendMessage().setText(builder.toString()));
+    bot.sendBack(update, SendMessage.builder().chatId("").text(builder.toString()).build());
   }
 }
