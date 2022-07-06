@@ -18,15 +18,16 @@ public class NonStickerModeHandler extends SimpleUpdateHandler {
   @Override
   public boolean handleUpdate(ThomasBot bot, Update update) {
     if (bot.getChatStorage()
-            .getChatMeta(update.getMessage().getChatId())
+            .getChatMeta(update.getMessage().getChatId().toString())
             .getBoolean("stickerMode")
             .orElse(false)
         && update.getMessage().hasSticker()) {
       try {
         bot.execute(
-            new DeleteMessage()
-                .setMessageId(update.getMessage().getMessageId())
-                .setChatId(update.getMessage().getChatId()));
+            DeleteMessage.builder()
+                .messageId(update.getMessage().getMessageId())
+                .chatId(update.getMessage().getChatId().toString())
+                .build());
       } catch (TelegramApiException e) {
         e.printStackTrace();
       }

@@ -14,15 +14,16 @@ public class WelcomeHandler extends SimpleUpdateHandler {
 
     Message message = update.getMessage();
     if (!bot.getChatStorage()
-        .lookup(message.getChatId(), message.getFrom().getUserName())
+        .lookup(message.getChatId().toString(), message.getFrom().getUserName())
         .isPresent()) {
       bot.getChatStorage()
-          .put(message.getChatId(), message.getFrom().getUserName(), message.getFrom().getId());
+          .put(message.getChatId().toString(), message.getFrom().getUserName(), message.getFrom().getId());
       bot.sendBack(
           update,
-          new SendMessage()
-              .setText(
-                  "Привет, " + message.getFrom().getUserName() + "! Приятно познакомиться :)"));
+          SendMessage.builder()
+              .chatId("")
+              .text("Привет, " + message.getFrom().getUserName() + "! Приятно познакомиться :)")
+              .build());
       Main.save();
     }
 

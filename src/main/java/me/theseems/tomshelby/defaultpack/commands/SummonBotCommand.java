@@ -25,14 +25,14 @@ public class SummonBotCommand extends SimpleBotCommand {
   @Override
   public void handle(ThomasBot bot, String[] args, Update update) {
     if (args.length == 0) {
-      bot.sendBack(update, new SendMessage().setText("Укажите команду которую нужно прописать!"));
+      bot.sendBack(update, SendMessage.builder().text("Укажите команду которую нужно прописать!").build());
       return;
     }
 
     String action = Joiner.on(' ').join(args);
     CommandUtils.CommandSkeleton skeleton = CommandUtils.extractCommand(action);
     if (!skeleton.success) {
-      bot.sendBack(update, new SendMessage().setText("Не удалось распознать команду."));
+      bot.sendBack(update, SendMessage.builder().text("Не удалось распознать команду.").build());
       return;
     }
 
@@ -44,26 +44,28 @@ public class SummonBotCommand extends SimpleBotCommand {
     if (SUMMON_BLACKLIST.contains(mainLabel)) {
       bot.sendBack(
           update,
-          new SendMessage()
-              .setText("Эту команду запрещено призывать в связи с техническими ограничениями"));
+          SendMessage.builder()
+              .text("Эту команду запрещено призывать в связи с техническими ограничениями")
+              .build());
       return;
     }
 
     KeyboardRow row = new KeyboardRow();
     row.add(action);
 
-    TomMeta meta = bot.getChatStorage().getChatMeta(update.getMessage().getChatId());
+    TomMeta meta = bot.getChatStorage().getChatMeta(update.getMessage().getChatId().toString());
     int summonActiveMils = meta.getInteger(SUMMON_ACTIVE_MILS_KEY).orElse(5000);
 
     bot.sendBack(
         update,
-        new SendMessage()
-            .setReplyMarkup(new ReplyKeyboardMarkup().setKeyboard(Collections.singletonList(row)))
-            .setText(
-                "Опаааа а тут просят вас это самое.. ну прописать комманду ("
+        SendMessage.builder()
+            .chatId("")
+            .replyMarkup(ReplyKeyboardMarkup.builder().keyboard(Collections.singletonList(row)).build())
+            .text("Опаааа а тут просят вас это самое.. ну прописать комманду ("
                     + summonActiveMils / 1000
                     + " сек на реакцию) "
-                    + action));
+                    + action)
+            .build());
 
     Timer timer = new Timer();
     timer.schedule(

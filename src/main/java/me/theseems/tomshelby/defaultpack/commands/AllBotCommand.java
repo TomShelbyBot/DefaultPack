@@ -6,7 +6,7 @@ import me.theseems.tomshelby.command.AdminPermissibleBotCommand;
 import me.theseems.tomshelby.command.SimpleBotCommand;
 import me.theseems.tomshelby.command.SimpleCommandMeta;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.ChatMember;
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -28,10 +28,10 @@ public class AllBotCommand extends SimpleBotCommand implements AdminPermissibleB
 
     message = message.replaceAll("!", "\\\\!");
     Collection<ChatMember> resolvableNicknames =
-        bot.getChatStorage().getResolvableUsernames(update.getMessage().getChatId()).stream()
+        bot.getChatStorage().getResolvableUsernames(update.getMessage().getChatId().toString()).stream()
             .map(s ->
                     bot.getChatStorage()
-                        .lookupMember(update.getMessage().getChatId(), s)
+                        .lookupMember(update.getMessage().getChatId().toString(), s)
                         .orElse(null))
             .collect(Collectors.toList());
 
@@ -45,10 +45,14 @@ public class AllBotCommand extends SimpleBotCommand implements AdminPermissibleB
     }
 
     try {
-      bot.execute(
-          new SendMessage().setChatId(update.getMessage().getChatId())
-              .setText("\uD83D\uDECE " + result.toString())
-              .enableMarkdownV2(true)); // '🛎'
+      SendMessage sendMessage =
+              SendMessage.builder()
+                      .chatId(update.getMessage().getChatId().toString())
+                      .text("\uD83D\uDECE " + result.toString())
+                      .build();
+
+      sendMessage.enableMarkdownV2(true);
+      bot.execute(sendMessage); // '🛎'
     } catch (TelegramApiException e) {
       bot.replyBackText(update, "Не могу отправить такое сообщение, аккуратнее с / и !");
     }

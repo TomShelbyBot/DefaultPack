@@ -9,7 +9,7 @@ import me.theseems.tomshelby.command.SimpleCommandMeta;
 import me.theseems.tomshelby.defaultpack.punishment.MutePunishment;
 import me.theseems.tomshelby.util.StringUtils;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.ChatMember;
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.time.temporal.ChronoUnit;
@@ -32,7 +32,7 @@ public class MuteBotCommand extends SimpleBotCommand implements AdminPermissible
   public void handle(ThomasBot bot, String[] args, Update update) {
     if (args.length == 0) {
       bot.sendBack(
-          update, new SendMessage().setText("Укажите юзера кому нужно выдать пизды (мут)!"));
+          update, SendMessage.builder().text("Укажите юзера кому нужно выдать пизды (мут)!").build());
     } else {
 
       if (args[0].startsWith("@")) args[0] = args[0].substring(1);
@@ -47,7 +47,7 @@ public class MuteBotCommand extends SimpleBotCommand implements AdminPermissible
         } catch (NumberFormatException e) {
           bot.sendBack(
               update,
-              new SendMessage().setText("Укажите нормальный срок (целое положительное число)"));
+              SendMessage.builder().text("Укажите нормальный срок (целое положительное число)").build());
           return;
         }
 
@@ -57,13 +57,14 @@ public class MuteBotCommand extends SimpleBotCommand implements AdminPermissible
       }
 
       Optional<ChatMember> member =
-          Main.getBot().getChatStorage().lookupMember(update.getMessage().getChatId(), args[0]);
+          Main.getBot().getChatStorage().lookupMember(update.getMessage().getChatId().toString(), args[0]);
       if (!member.isPresent()) {
         bot.sendBack(
             update,
-            new SendMessage()
-                .setText("Не могу найти юзера в сообщении. Проверьте ник.")
-                .setReplyToMessageId(update.getMessage().getMessageId()));
+            SendMessage.builder()
+                .text("Не могу найти юзера в сообщении. Проверьте ник.")
+                .replyToMessageId(update.getMessage().getMessageId())
+                .build());
         return;
       }
 
@@ -75,15 +76,17 @@ public class MuteBotCommand extends SimpleBotCommand implements AdminPermissible
 
       bot.sendBack(
           update,
-          new SendMessage()
-              .setText(
+          SendMessage.builder()
+              .chatId("")
+              .text(
                   update.getMessage().getFrom().getUserName()
                       + " замутил @"
                       + member.get().getUser().getUserName()
                       + (reason != null ? " по причине '" + reason + "'" : "")
                       + " на "
                       + period
-                      + "с."));
+                      + "с.")
+              .build());
     }
   }
 }

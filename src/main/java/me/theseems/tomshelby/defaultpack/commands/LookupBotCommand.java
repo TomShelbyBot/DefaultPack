@@ -6,8 +6,9 @@ import me.theseems.tomshelby.command.SimpleBotCommand;
 import me.theseems.tomshelby.command.SimpleCommandMeta;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.ChatMember;
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberAdministrator;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.Optional;
@@ -33,40 +34,47 @@ public class LookupBotCommand extends SimpleBotCommand {
     }
 
     Long chatId = update.getMessage().getChatId();
-    Optional<Integer> userId = bot.getChatStorage().lookup(chatId, args[0]);
+    Optional<Long> userId = bot.getChatStorage().lookup(chatId.toString(), args[0]);
 
     if (!userId.isPresent()) {
-      bot.replyBack(update, new SendMessage().setText("А вот этого гражданина я не знаю."));
+      bot.replyBack(update, SendMessage.builder()
+              .chatId("").text("А вот этого гражданина я не знаю.").build());
       String knownNicknames =
           Joiner.on(' ')
-              .join(bot.getChatStorage().getResolvableUsernames(chatId))
+              .join(bot.getChatStorage().getResolvableUsernames(chatId.toString()))
               .replaceFirst("@", " ");
 
       bot.sendBack(
           update,
-          new SendMessage()
-              .setText(
+          SendMessage.builder()
+              .chatId("")
+              .text(
                   "Мне известны ("
-                      + bot.getChatStorage().getResolvableUsernames(chatId).size()
+                      + bot.getChatStorage().getResolvableUsernames(chatId.toString()).size()
                       + "): \n"
-                      + knownNicknames));
+                      + knownNicknames)
+                  .build());
       return;
     }
 
     try {
       ChatMember member =
-          bot.execute(new GetChatMember().setUserId(userId.get()).setChatId(chatId));
+          bot.execute(GetChatMember.builder().userId(userId.get()).chatId(chatId.toString()).build());
 
       String firstName =
-          Optional.ofNullable(member.getUser().getFirstName()).orElse("<Имя не указано>");
+          Optional.of(member.getUser().getFirstName()).orElse("<Имя не указано>");
       String lastName =
           Optional.ofNullable(member.getUser().getLastName()).orElse("<Фамилия не указана>");
-      String title = Optional.ofNullable(member.getCustomTitle()).orElse("<Приписки нет>");
+
+      String title = "<Приписки нет>";
+      if (member instanceof ChatMemberAdministrator) {
+        title = ((ChatMemberAdministrator) member).getCustomTitle();
+      }
 
       bot.sendBack(
           update,
-          new SendMessage()
-              .setText(
+          SendMessage.builder()
+              .text(
                   "Гражданин "
                       + firstName
                       + " "
@@ -74,12 +82,13 @@ public class LookupBotCommand extends SimpleBotCommand {
                       + " "
                       + member.getUser().getUserName()
                       + " с припиской "
-                      + title));
+                      + title)
+                  .build());
 
     } catch (TelegramApiException e) {
       bot.sendBack(
           update,
-          new SendMessage().setText("Произошла ошибочка. Кажется, я не узнаю этого пользователя."));
+          SendMessage.builder().text("Произошла ошибочка. Кажется, я не узнаю этого пользователя.").build());
       e.printStackTrace();
     }
   }

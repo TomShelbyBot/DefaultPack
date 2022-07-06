@@ -8,7 +8,7 @@ import me.theseems.tomshelby.command.SimpleCommandMeta;
 import me.theseems.tomshelby.defaultpack.punishment.ClapMutePunishment;
 import me.theseems.tomshelby.util.StringUtils;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.ChatMember;
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.time.temporal.ChronoUnit;
@@ -28,9 +28,10 @@ public class ClapMuteBotCommand extends SimpleBotCommand implements AdminPermiss
     if (!dragResult.getMember().isPresent()) {
       bot.sendBack(
           update,
-          new SendMessage()
-              .setText("Не могу найти гражданина которому нужно вставить кляп!")
-              .setReplyToMessageId(update.getMessage().getMessageId()));
+          SendMessage.builder()
+              .text("Не могу найти гражданина которому нужно вставить кляп!")
+              .replyToMessageId(update.getMessage().getMessageId())
+              .build());
       return;
     }
 
@@ -39,10 +40,11 @@ public class ClapMuteBotCommand extends SimpleBotCommand implements AdminPermiss
     if (args.length == 0) {
       bot.sendBack(
           update,
-          new SendMessage()
-              .setText(
+          SendMessage.builder()
+              .text(
                   "Укажите нормальный срок присутствия кляпа во рту! (Целое положительно число длиной меньше 10)")
-              .setReplyToMessageId(update.getMessage().getMessageId()));
+              .replyToMessageId(update.getMessage().getMessageId())
+              .build());
       return;
     }
 
@@ -52,10 +54,11 @@ public class ClapMuteBotCommand extends SimpleBotCommand implements AdminPermiss
     } catch (NumberFormatException e) {
       bot.sendBack(
           update,
-          new SendMessage()
-              .setText(
+          SendMessage.builder()
+              .text(
                   "Укажите нормальный срок присутствия кляпа во рту! (Целое положительно число длиной меньше 10)")
-              .setReplyToMessageId(update.getMessage().getMessageId()));
+              .replyToMessageId(update.getMessage().getMessageId())
+              .build());
       return;
     }
 
@@ -68,8 +71,9 @@ public class ClapMuteBotCommand extends SimpleBotCommand implements AdminPermiss
 
     bot.sendBack(
         update,
-        new SendMessage()
-            .setText(
+        SendMessage.builder()
+            .chatId("")
+            .text(
                 update.getMessage().getFrom().getUserName()
                     + " вставил кляп в рот @"
                     + chatMember.getUser().getUserName()
@@ -78,6 +82,7 @@ public class ClapMuteBotCommand extends SimpleBotCommand implements AdminPermiss
                     + "c."
                     + (args.length > 1
                         ? " со словами '" + Joiner.on(' ').join(StringUtils.skipOne(args)) + "'"
-                        : " При этом ничего не сказал...")));
+                        : " При этом ничего не сказал..."))
+            .build());
   }
 }

@@ -20,15 +20,18 @@ public class NoStickerBotCommand extends SimpleBotCommand implements AdminPermis
 
   @Override
   public void handle(ThomasBot bot, String[] args, Update update) {
-    TomMeta meta = bot.getChatStorage().getChatMeta(update.getMessage().getChatId());
+    TomMeta meta = bot.getChatStorage().getChatMeta(update.getMessage().getChatId().toString());
     boolean current = meta.getBoolean(STICKER_MODE_META_KEY).orElse(false);
     meta.set(STICKER_MODE_META_KEY, !current);
 
     String statusText = (!current ? "_ВКЛЮЧЕН_" : "выключен");
-    bot.sendBack(
-        update,
-        new SendMessage()
-            .setText("*Режим блокировки стикеров*: " + statusText)
-            .enableMarkdown(true));
+    SendMessage sendMessage =
+            SendMessage.builder()
+                    .chatId("")
+                    .text("*Режим блокировки стикеров*: " + statusText)
+                    .build();
+
+    sendMessage.enableMarkdown(true);
+    bot.sendBack(update, sendMessage);
   }
 }

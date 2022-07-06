@@ -23,26 +23,28 @@ public class GoBotCommand extends SimpleBotCommand implements AdminPermissibleBo
   @Override
   public void handle(ThomasBot bot, String[] args, Update update) {
     try {
-      TomMeta chatMeta = bot.getChatStorage().getChatMeta(update.getMessage().getChatId());
+      TomMeta chatMeta = bot.getChatStorage().getChatMeta(update.getMessage().getChatId().toString());
       String prefix = chatMeta.getString("goPrefix").orElse("Погнали ");
       String positiveOption = chatMeta.getString("goPollPositive").orElse("Да");
       String negativeOption = chatMeta.getString("goPollNegative").orElse("Нет");
       String rudeOption = chatMeta.getString("goPollRude").orElse("\uD83E\uDD2C"); // '🤬'
 
       SendPoll sendPoll =
-          new SendPoll()
-              .setChatId(update.getMessage().getChatId())
-              .setQuestion(prefix + Joiner.on(' ').join(args))
-              .setAnonymous(false)
-              .setOptions(Arrays.asList(positiveOption, negativeOption, rudeOption));
+          SendPoll.builder()
+              .chatId(update.getMessage().getChatId().toString())
+              .question(prefix + Joiner.on(' ').join(args))
+              .isAnonymous(false)
+              .options(Arrays.asList(positiveOption, negativeOption, rudeOption))
+              .build();
 
       Message message = bot.execute(sendPoll);
       int pollMessageId = message.getMessageId();
 
       bot.execute(
-          new PinChatMessage()
-              .setChatId(update.getMessage().getChatId())
-              .setMessageId(pollMessageId));
+          PinChatMessage.builder()
+              .chatId(update.getMessage().getChatId().toString())
+              .messageId(pollMessageId)
+              .build());
 
       // Add poll to the container so that we'll be able
       // to send a reaction to the corresponding chat

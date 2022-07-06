@@ -22,9 +22,10 @@ public class ToxicBotCommand extends SimpleBotCommand {
     Message reply = update.getMessage().getReplyToMessage();
     bot.sendBack(
         update,
-        new SendMessage()
-            .setText(
-                "ᅠ\n☣ ТОКСИК АЛЕРТ!! ☣\nА вы знали, что этот пользователь токсик?ᅠ\nᅠ\nБерегитесь!ᅠ")
-            .setReplyToMessageId(reply.getMessageId()));
+        SendMessage.builder()
+            .text("ᅠ\n☣ ТОКСИК АЛЕРТ!! ☣\nА вы знали, что этот пользователь токсик?ᅠ\nᅠ\nБерегитесь!ᅠ")
+            .replyToMessageId(reply.getMessageId())
+            .chatId(reply.getChatId().toString())
+            .build());
   }
 }
